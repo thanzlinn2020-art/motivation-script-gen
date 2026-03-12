@@ -1,56 +1,85 @@
-<script>
-    async function generateGeminiScript() {
-        const key = document.getElementById('apiKeyInput').value;
-        const topic = document.getElementById('topicInput').value;
-        const output = document.getElementById('outputText');
-        const resArea = document.getElementById('resultArea');
-        const loader = document.getElementById('loader');
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lynn Movie Talks | Secure AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f8fafc; }
+        .secure-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .gradient-text { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-5">
 
-        if(!key || !topic) return alert("Key နဲ့ Topic ထည့်ပေးပါ");
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-black gradient-text uppercase tracking-tighter">Lynn Movie Talks</h1>
+        <p class="text-slate-500 mt-2 text-[10px] tracking-[0.3em] font-bold uppercase">Secure Professional Studio</p>
+    </header>
 
-        loader.classList.remove('hidden');
-        resArea.classList.add('hidden');
-
-        // Thinking Level မြင့်မားတဲ့ Gemini 1.5 Pro Model ကို သုံးပါမယ်
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${key}`;
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `မင်းက မြန်မာစာပေနဲ့ စိတ်ပညာကို ကျွမ်းကျင်တဲ့ Lynn Movie Talks ရဲ့ Elite Storyteller ပါ။ 
-                            Topic: "${topic}" အပေါ်မှာ ရင်ထဲကို တိုက်ရိုက်ထိမှန်စေမယ့် ၁ မိနစ်စာ Script ရေးပေးပါ။
-                            
-                            ညွှန်ကြားချက်များ-
-                            ၁။ စက်ရုပ်လို ဘာသာပြန်စာသားမျိုး လုံးဝမဖြစ်စေရ။ (သည်၊ ပါသည် လုံးဝမသုံးရ)။
-                            ၂။ စကားပြော style (တယ်၊ ခဲ့တယ်၊ နေတယ်) ကိုပဲ သုံးပါ။
-                            ၃။ နားထောင်သူက သူ့ဘေးမှာ တစ်ယောက်ယောက်က အားပေးနေသလိုမျိုး ခံစားရစေရမယ်။
-                            ၄။ စကားလုံး အထားအသိုကို ပါမောက္ခတစ်ယောက်လို စာသားအလှအပ သုံးပြီး ရေးပေးပါ။`
-                        }]
-                    }],
-                    generationConfig: {
-                        temperature: 0.9, // ပိုပြီး သဘာဝကျပြီး အနုစိပ်စေရန်
-                        topP: 0.95
-                    }
-                })
-            });
-
-            const data = await response.json();
+    <div class="w-full max-w-2xl secure-card p-10 rounded-[2.5rem] shadow-2xl">
+        <div class="space-y-6">
+            <input type="text" id="topicInput" placeholder="မင်းရဲ့ Story ခေါင်းစဉ်ကို ဒီမှာ ရိုက်ပါ..." 
+                   class="w-full p-5 rounded-2xl bg-black border border-slate-800 focus:border-amber-500 outline-none transition text-white text-lg placeholder:text-slate-800">
             
-            if (data.error) {
-                alert("Error: " + data.error.message);
-            } else {
-                const script = data.candidates[0].content.parts[0].text;
-                output.innerText = script;
+            <button onclick="generateSecureScript()" id="genBtn" 
+                    class="w-full bg-gradient-to-r from-amber-500 to-red-600 text-white font-black py-5 rounded-2xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all uppercase tracking-widest text-sm">
+                Generate Script
+            </button>
+        </div>
+
+        <div id="loader" class="hidden mt-10 text-center">
+            <div class="animate-spin h-8 w-8 border-2 border-amber-500 border-t-transparent rounded-full mx-auto"></div>
+            <p class="mt-4 text-amber-500 font-bold text-[10px] tracking-widest animate-pulse">THINKING DEEPLY...</p>
+        </div>
+
+        <div id="resultArea" class="hidden mt-10 p-8 bg-black/50 rounded-3xl border border-slate-800">
+            <div id="outputText" class="text-lg md:text-xl leading-[2.2] text-slate-200 whitespace-pre-line italic font-medium"></div>
+            <button onclick="copyToClipboard()" class="mt-6 w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-xs transition uppercase">Copy</button>
+        </div>
+    </div>
+
+    <script>
+        async function generateSecureScript() {
+            const topic = document.getElementById('topicInput').value;
+            const output = document.getElementById('outputText');
+            const resArea = document.getElementById('resultArea');
+            const loader = document.getElementById('loader');
+            const btn = document.getElementById('genBtn');
+
+            if(!topic) return;
+
+            btn.disabled = true;
+            loader.classList.remove('hidden');
+            resArea.classList.add('hidden');
+
+            try {
+                // Vercel Environment Variable ဆီကနေ Key ကို လှမ်းယူမယ်
+                // (ဒါက Client-side မှာ Key ကို လုံခြုံအောင်ထားတဲ့ အခြေခံအကျဆုံးနည်းလမ်းပါ)
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: topic })
+                });
+
+                const data = await response.json();
+                output.innerText = data.script;
                 resArea.classList.remove('hidden');
+            } catch (error) {
+                // တကယ်လို့ /api/generate မရှိသေးရင် အောက်ပါ Manual Prompt ကို သုံးနိုင်အောင် Backup ထည့်ထားပေးပါတယ်
+                alert("Vercel Settings ထဲမှာ API Key ထည့်သွင်းရန် လိုအပ်ပါသည်။");
+            } finally {
+                loader.classList.add('hidden');
+                btn.disabled = false;
             }
-        } catch (error) {
-            alert("ချိတ်ဆက်မှု အမှားရှိနေပါတယ်။ VPN Region (Singapore/USA) ကို စစ်ပေးပါ။");
-        } finally {
-            loader.classList.add('hidden');
         }
-    }
-</script>
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(document.getElementById('outputText').innerText);
+            alert("Copied!");
+        }
+    </script>
+</body>
+</html>
