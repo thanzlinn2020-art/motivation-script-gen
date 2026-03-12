@@ -3,116 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Pro Prompter</title>
+    <title>Lynn Studio | Ultra Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@800&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #050505; color: #e5e7eb; }
-        .pro-card { background: #111; border: 1px solid #222; border-radius: 1.5rem; transition: all 0.3s; }
-        .pro-card:hover { border-color: #f97316; box-shadow: 0 0 30px rgba(249, 115, 22, 0.1); }
-        .prompt-area { background: #000; border-left: 3px solid #f97316; font-family: 'Inter', sans-serif; }
-        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); }
+        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #f3f4f6; }
+        .pro-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 2rem; transition: 0.3s; }
+        .pro-card:hover { border-color: #f97316; }
+        .inner-box { background: #000; border: 1px solid #111; border-radius: 1.2rem; }
+        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
+        .copy-tag { font-size: 9px; cursor: pointer; background: #1a1a1a; padding: 2px 8px; border-radius: 4px; transition: 0.2s; }
+        .copy-tag:active { background: #f97316; color: #000; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-5">
+<body class="min-h-screen flex flex-col items-center p-4">
 
-    <header class="py-10 text-center">
-        <h1 class="text-4xl font-black italic tracking-tighter text-orange-500 mb-1" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <p class="text-[9px] tracking-[0.5em] text-slate-600 uppercase font-bold">Advanced Scene & Animation Prompter</p>
+    <header class="py-12 text-center">
+        <h1 class="text-5xl font-black italic tracking-tighter text-orange-500 mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
+        <p class="text-[9px] tracking-[0.6em] text-slate-600 uppercase font-black">AI Storyboard & Visual Director</p>
     </header>
 
-    <div class="w-full max-w-2xl pro-card p-6 mb-10 shadow-2xl">
-        <textarea id="topicInput" rows="2" placeholder="ဥပမာ - ဘဝအတွက် သင်ခန်းစာ..." 
-                  class="w-full p-4 rounded-xl bg-black border border-white/10 focus:border-orange-500 outline-none text-white text-center text-md mb-4"></textarea>
+    <div class="w-full max-w-2xl pro-card p-8 mb-12 shadow-2xl border-t-2 border-t-orange-500/50">
+        <textarea id="topicInput" rows="2" placeholder="Video Topic ကို ဒီမှာ ရေးပါ..." 
+                  class="w-full p-5 rounded-2xl bg-black border border-white/5 focus:border-orange-500 outline-none text-white text-center text-lg mb-6"></textarea>
         
-        <button onclick="generateProPrompts()" id="genBtn" 
-                class="w-full gradient-btn text-white font-black py-4 rounded-xl active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Generate Pro Storyboard
+        <button onclick="generateUltraPro()" id="genBtn" 
+                class="w-full gradient-btn text-white font-black py-5 rounded-2xl active:scale-95 transition-all uppercase tracking-widest text-xs">
+            Build Professional Storyboard
         </button>
     </div>
 
-    <div id="loader" class="hidden mb-10 text-center">
-        <div class="inline-block w-6 h-6 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
-        <p class="mt-4 text-[9px] text-orange-500 font-bold uppercase tracking-widest animate-pulse">AI is crafting scenes...</p>
+    <div id="loader" class="hidden mb-12 text-center">
+        <div class="inline-block w-8 h-8 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
+        <p class="mt-4 text-[9px] text-orange-500 font-bold uppercase tracking-[0.4em] animate-pulse">Director is Crafting...</p>
     </div>
 
-    <div id="resultArea" class="hidden w-full max-w-2xl space-y-12 pb-24 text-left">
-        <div id="sceneList" class="space-y-12"></div>
+    <div id="resultArea" class="hidden w-full max-w-3xl space-y-16 pb-32">
+        <div id="sceneContainer" class="space-y-16"></div>
     </div>
 
     <script>
         const API_KEY = "AIzaSyAQVYjoYL3uIaDfCRdytAiNTheRfX8oOC4"; 
 
-        async function generateProPrompts() {
+        async function generateUltraPro() {
             const topic = document.getElementById('topicInput').value;
             if(!topic) return;
 
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
             const resArea = document.getElementById('resultArea');
-            const list = document.getElementById('sceneList');
+            const container = document.getElementById('sceneContainer');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resArea.classList.add('hidden');
-            list.innerHTML = "";
+            container.innerHTML = "";
 
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ format က Scene တစ်ခုချင်းစီအတွက် အောက်ပါအတိုင်း သေချာခွဲပေးပါ -
-                        Scene [Number]:
-                        Script: [Burmese Dialogue]
-                        Image Prompt: [English Prompt for realistic cinematic visuals]
-                        Animation Prompt: [Grok/Luma AI movement instructions]` }] }]
+                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ format က Scene တစ်ခုချင်းစီအတွက် အောက်ပါအတိုင်း (စာလုံးပေါင်းမမှားစေဘဲ) တိတိကျကျ ရေးပေးပါ။
+                        Scene [နံပါတ်]:
+                        Script: [ဒီနေရာမှာ မြန်မာစကားပြော Script ရေးပါ]
+                        Image Prompt (Myanmar): [ဒီနေရာမှာ ပုံဖော်ရမယ့် မြင်ကွင်းကို မြန်မာလို အသေးစိတ် ရေးပါ]
+                        Image Prompt (English): [ဒီနေရာမှာ အပေါ်က မြင်ကွင်းကိုပဲ AI အတွက် English လို Professional Cinematic Prompt ရေးပါ]
+                        Animation: [ဒီနေရာမှာ Grok/Luma AI အတွက် လှုပ်ရှားမှု Prompt ကို English လို ရေးပါ]` }] }]
                     })
                 });
 
                 const data = await res.json();
                 const rawText = data.candidates[0].content.parts[0].text;
-                const scenes = rawText.split(/Scene\s*\d+\s*:?/i).filter(s => s.trim() !== "");
+                
+                // Stable Parsing Logic
+                const sceneBlocks = rawText.split(/Scene\s*\d+\s*:?/i).filter(s => s.trim().length > 20);
 
-                scenes.forEach((scene, i) => {
-                    const script = scene.match(/Script:\s*([\s\S]*?)(?=Image Prompt:|$)/i)?.[1].trim();
-                    const imgPrompt = scene.match(/Image Prompt:\s*([\s\S]*?)(?=Animation Prompt:|$)/i)?.[1].trim();
-                    const animPrompt = scene.match(/Animation Prompt:\s*([\s\S]*?)(?=$)/i)?.[1].trim();
+                sceneBlocks.forEach((block, i) => {
+                    const script = extractField(block, "Script:");
+                    const imgMyan = extractField(block, "Image Prompt (Myanmar):");
+                    const imgEng = extractField(block, "Image Prompt (English):");
+                    const anim = extractField(block, "Animation:");
 
-                    list.innerHTML += `
-                        <div class="pro-card p-6 space-y-6">
-                            <div class="flex items-center justify-between">
-                                <span class="bg-orange-500 text-black px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter">SCENE ${i+1}</span>
-                            </div>
-                            
-                            <div class="space-y-2">
-                                <p class="text-[9px] text-slate-500 uppercase font-black tracking-widest">Burmese Dialogue</p>
-                                <p class="text-xl leading-relaxed text-slate-100 italic font-medium">${script}</p>
-                            </div>
-
-                            <div class="prompt-area p-4 rounded-lg space-y-4 shadow-inner">
-                                <div>
-                                    <p class="text-[8px] text-orange-500 font-black uppercase mb-1">Image Prompt (for Midjourney/Leonardo)</p>
-                                    <p class="text-[11px] text-slate-300 font-mono leading-relaxed">${imgPrompt}</p>
-                                </div>
-                                <div class="h-[1px] bg-white/5"></div>
-                                <div>
-                                    <p class="text-[8px] text-cyan-500 font-black uppercase mb-1">Animation Prompt (for Grok/Luma/Runway)</p>
-                                    <p class="text-[11px] text-slate-300 font-mono leading-relaxed">${animPrompt}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                resArea.classList.remove('hidden');
-            } catch (e) {
-                alert("VPN Error. Please use Singapore/USA.");
-            } finally {
-                loader.classList.add('hidden');
-                btn.disabled = false;
-            }
-        }
-    </script>
-</body>
-</html>
+                    container.innerHTML += `
+                        <div class="pro-card p-8 space-y-8 animate-fade-in">
+                            <div class="flex items-center justify-
