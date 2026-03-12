@@ -3,131 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Master Viral Creator</title>
+    <title>Lynn Studio | Final Viral Creator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@800&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f1f5f9; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 2rem; }
-        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); box-shadow: 0 10px 20px rgba(249, 115, 22, 0.2); }
-        .timestamp { color: #fb923c; font-family: monospace; font-weight: bold; background: rgba(249, 115, 22, 0.1); padding: 2px 8px; border-radius: 6px; margin-right: 10px; }
-        .copy-badge { cursor: pointer; font-size: 10px; font-weight: 900; color: #64748b; border: 1px solid #1e293b; padding: 4px 12px; border-radius: 8px; transition: 0.3s; }
-        .copy-badge:hover { color: #f97316; border-color: #f97316; }
+        body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f1f5f9; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 2rem; }
+        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
     <header class="py-12 text-center">
         <h1 class="text-5xl font-black italic tracking-tighter text-orange-500 mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <p class="text-[9px] tracking-[0.6em] text-slate-500 uppercase font-black">AI Cinema & Viral Script Engine</p>
+        <p class="text-[9px] tracking-[0.5em] text-slate-500 uppercase font-black italic">V16 Final Stable Edition</p>
     </header>
 
-    <div class="w-full max-w-2xl glass p-10 mb-12 shadow-2xl">
-        <textarea id="topicInput" rows="2" placeholder="Topic: ဘဝအောင်မြင်ရေး လျှို့ဝှက်ချက်..." 
-                  class="w-full p-6 rounded-3xl bg-black/50 border border-white/5 focus:border-orange-500 outline-none text-white text-center text-xl mb-8 transition-all"></textarea>
+    <div class="w-full max-w-2xl glass p-8 mb-10">
+        <textarea id="topicInput" rows="2" placeholder="ဥပမာ - ဘဝအောင်မြင်ရေး လျှို့ဝှက်ချက်..." 
+                  class="w-full p-5 rounded-2xl bg-black/50 border border-white/5 focus:border-orange-500 outline-none text-white text-center text-lg mb-6 transition-all"></textarea>
         
-        <button onclick="buildViralContent()" id="genBtn" 
-                class="w-full gradient-btn text-white font-black py-6 rounded-3xl active:scale-95 transition-all uppercase tracking-[0.2em] text-xs">
-            Generate Viral Storyboard 🎬
+        <button onclick="startGeneration()" id="genBtn" 
+                class="w-full gradient-btn text-white font-black py-5 rounded-2xl active:scale-95 transition-all uppercase tracking-widest text-xs">
+            Generate Content 🚀
         </button>
     </div>
 
-    <div id="loader" class="hidden mb-12 text-center">
-        <div class="inline-block w-8 h-8 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
-        <p class="mt-4 text-[10px] text-orange-500 font-bold uppercase tracking-widest animate-pulse">Director is writing your script...</p>
-    </div>
+    <div id="loader" class="hidden mb-10 text-orange-500 font-bold animate-pulse text-[10px] uppercase tracking-widest text-center">Director is thinking...</div>
 
-    <div id="resultArea" class="hidden w-full max-w-3xl space-y-12 pb-40 text-left">
-        
-        <div class="glass p-8 space-y-8 shadow-xl">
-            <div class="flex justify-between items-center border-b border-white/5 pb-4">
-                <span class="text-orange-500 font-black text-xs uppercase italic tracking-widest">Main Script [With Timestamps]</span>
-                <span class="copy-badge" onclick="copyThis('scriptOutput')">COPY SCRIPT</span>
-            </div>
-            <div id="scriptOutput" class="text-xl leading-[2.6] text-slate-200 font-medium italic whitespace-pre-line"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass p-8 space-y-4">
-                <p class="text-[10px] text-cyan-500 font-black uppercase tracking-widest">Viral Hook (အဖွင့်)</p>
-                <p id="hookOutput" class="text-md text-slate-300 italic leading-relaxed"></p>
-            </div>
-            <div class="glass p-8 space-y-4">
-                <div class="flex justify-between items-center">
-                    <p class="text-[10px] text-pink-500 font-black uppercase tracking-widest">TikTok Caption</p>
-                    <span class="copy-badge !text-[8px]" onclick="copyThis('captionOutput')">COPY</span>
-                </div>
-                <p id="captionOutput" class="text-xs text-slate-400 leading-relaxed"></p>
-            </div>
-        </div>
+    <div id="resultArea" class="hidden w-full max-w-2xl space-y-8 pb-32">
+        <div id="mainOutput" class="glass p-8 text-xl leading-[2.6] text-slate-200 font-medium italic whitespace-pre-line"></div>
     </div>
 
     <script>
-        // မင်းရဲ့ API Key အသစ်ကို ထည့်သွင်းထားပါတယ်
         const API_KEY = "AIzaSyAeKPEvkZ-GWezN0RhyIGOtvbqmOi16eSE"; 
 
-        async function buildViralContent() {
+        async function startGeneration() {
             const topic = document.getElementById('topicInput').value;
             if(!topic) return;
 
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
             const resArea = document.getElementById('resultArea');
+            const output = document.getElementById('mainOutput');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resArea.classList.add('hidden');
 
-            try {
-                // v1beta နဲ့ Gemini 1.5 Flash Model ကို အသုံးပြုထားပါတယ်
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // URL ကို v1 (Stable) အဖြစ် ပြောင်းလဲထားပါတယ်
+            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
+            try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် ၁ မိနစ်စာ Storyboard ကို အောက်ပါအတိုင်း ရေးပေးပါ။
-                        ၁။ Script ကို Timestamp [00:00] format နဲ့ စကားပြော style (သည်၊ ပါသည် မပါဘဲ) ရေးပေးပါ။
-                        ၂။ Hook: [လူစိတ်ဝင်စားမယ့် Viral အဖွင့်စကား]
-                        ၃။ Caption: [Hashtags ပါတဲ့ TikTok Caption]` }] }]
+                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် ၁ မိနစ်စာ Script ကို Timestamp [00:00] format နဲ့ မြန်မာလို ရေးပေးပါ။` }] }]
                     })
                 });
 
                 const data = await response.json();
-                if(!data.candidates) throw new Error("API Connection Failed");
-
-                const rawText = data.candidates[0].content.parts[0].text;
-
-                // Smart Extraction Logic
-                document.getElementById('scriptOutput').innerText = extract(rawText, /Script:|\[00:00\]/i, /Hook:|Caption:/i);
-                document.getElementById('hookOutput').innerText = extract(rawText, /Hook:/i, /Caption:|Script:/i);
-                document.getElementById('captionOutput').innerText = extract(rawText, /Caption:/i, /Script:|Hook:/i);
-
-                resArea.classList.remove('hidden');
+                
+                if (data.candidates && data.candidates[0]) {
+                    output.innerText = data.candidates[0].content.parts[0].text;
+                    resArea.classList.remove('hidden');
+                } else {
+                    alert("🚨 API Error: " + (data.error ? data.error.message : "Response Failed"));
+                }
             } catch (e) {
-                alert("🚨 VPN (Singapore/USA) ချိတ်ဖို့ လိုအပ်ပါတယ်ဗျာ။");
+                alert("🚨 Network Error: VPN (Singapore/USA) ကို သေချာချိတ်ပြီး Browser ကို Refresh လုပ်ပါ။");
             } finally {
                 loader.classList.add('hidden');
                 btn.disabled = false;
             }
-        }
-
-        function extract(text, startRegex, endRegex) {
-            const startIdx = text.search(startRegex);
-            if (startIdx === -1) return "Director is processing...";
-            
-            let slice = text.slice(startIdx);
-            // Remove the label itself (e.g., "Hook:")
-            slice = slice.replace(/^(Script:|Hook:|Caption:)\s*/i, '');
-            
-            const endIdx = slice.search(endRegex);
-            return endIdx !== -1 ? slice.slice(0, endIdx).trim() : slice.trim();
-        }
-
-        function copyThis(id) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text);
-            alert("Copied to Clipboard!");
         }
     </script>
 </body>
