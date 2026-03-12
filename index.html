@@ -3,88 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Ultra Pro</title>
+    <title>Lynn Studio | Stable v9</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@800&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #f3f4f6; }
-        .pro-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 2rem; transition: 0.3s; }
-        .pro-card:hover { border-color: #f97316; }
-        .inner-box { background: #000; border: 1px solid #111; border-radius: 1.2rem; }
-        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
-        .copy-tag { font-size: 9px; cursor: pointer; background: #1a1a1a; padding: 2px 8px; border-radius: 4px; transition: 0.2s; }
-        .copy-tag:active { background: #f97316; color: #000; }
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
+        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #fff; }
+        .pro-card { background: #0d0d0d; border: 1px solid #222; border-radius: 1.5rem; }
+        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <header class="py-12 text-center">
-        <h1 class="text-5xl font-black italic tracking-tighter text-orange-500 mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <p class="text-[9px] tracking-[0.6em] text-slate-600 uppercase font-black">AI Storyboard & Visual Director</p>
+    <header class="py-10 text-center">
+        <h1 class="text-4xl font-black italic text-orange-500">LYNN STUDIO</h1>
+        <p class="text-[9px] tracking-widest text-slate-500 uppercase mt-2 font-bold">Stable AI Director</p>
     </header>
 
-    <div class="w-full max-w-2xl pro-card p-8 mb-12 shadow-2xl border-t-2 border-t-orange-500/50">
-        <textarea id="topicInput" rows="2" placeholder="Video Topic ကို ဒီမှာ ရေးပါ..." 
-                  class="w-full p-5 rounded-2xl bg-black border border-white/5 focus:border-orange-500 outline-none text-white text-center text-lg mb-6"></textarea>
+    <div class="w-full max-w-xl pro-card p-6 mb-10">
+        <textarea id="topicInput" rows="2" placeholder="Topic ကို ဒီမှာ ရေးပါ..." 
+                  class="w-full p-4 rounded-xl bg-black border border-white/10 focus:border-orange-500 outline-none text-white text-center mb-4"></textarea>
         
-        <button onclick="generateUltraPro()" id="genBtn" 
-                class="w-full gradient-btn text-white font-black py-5 rounded-2xl active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Build Professional Storyboard
+        <button onclick="generateContent()" id="genBtn" 
+                class="w-full gradient-btn text-white font-black py-4 rounded-xl active:scale-95 transition-all uppercase text-xs">
+            Generate Storyboard
         </button>
     </div>
 
-    <div id="loader" class="hidden mb-12 text-center">
-        <div class="inline-block w-8 h-8 border-2 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
-        <p class="mt-4 text-[9px] text-orange-500 font-bold uppercase tracking-[0.4em] animate-pulse">Director is Crafting...</p>
+    <div id="loader" class="hidden text-center mb-10">
+        <div class="inline-block w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+        <p id="statusTxt" class="mt-2 text-[10px] text-orange-400 font-bold uppercase">AI is thinking...</p>
     </div>
 
-    <div id="resultArea" class="hidden w-full max-w-3xl space-y-16 pb-32">
-        <div id="sceneContainer" class="space-y-16"></div>
+    <div id="resultArea" class="hidden w-full max-w-2xl space-y-10 pb-20">
+        <div id="sceneList"></div>
     </div>
 
     <script>
         const API_KEY = "AIzaSyAQVYjoYL3uIaDfCRdytAiNTheRfX8oOC4"; 
 
-        async function generateUltraPro() {
+        async function generateContent() {
             const topic = document.getElementById('topicInput').value;
             if(!topic) return;
 
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
-            const resArea = document.getElementById('resultArea');
-            const container = document.getElementById('sceneContainer');
+            const statusTxt = document.getElementById('statusTxt');
+            const list = document.getElementById('sceneList');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
-            resArea.classList.add('hidden');
-            container.innerHTML = "";
+            list.innerHTML = "";
 
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ format က Scene တစ်ခုချင်းစီအတွက် အောက်ပါအတိုင်း (စာလုံးပေါင်းမမှားစေဘဲ) တိတိကျကျ ရေးပေးပါ။
-                        Scene [နံပါတ်]:
-                        Script: [ဒီနေရာမှာ မြန်မာစကားပြော Script ရေးပါ]
-                        Image Prompt (Myanmar): [ဒီနေရာမှာ ပုံဖော်ရမယ့် မြင်ကွင်းကို မြန်မာလို အသေးစိတ် ရေးပါ]
-                        Image Prompt (English): [ဒီနေရာမှာ အပေါ်က မြင်ကွင်းကိုပဲ AI အတွက် English လို Professional Cinematic Prompt ရေးပါ]
-                        Animation: [ဒီနေရာမှာ Grok/Luma AI အတွက် လှုပ်ရှားမှု Prompt ကို English လို ရေးပါ]` }] }]
-                    })
-                });
+            // အသေချာဆုံး v1beta version နဲ့ model list
+            const models = [
+                "v1beta/models/gemini-2.0-flash:generateContent",
+                "v1beta/models/gemini-1.5-flash:generateContent"
+            ];
 
-                const data = await res.json();
-                const rawText = data.candidates[0].content.parts[0].text;
-                
-                // Stable Parsing Logic
-                const sceneBlocks = rawText.split(/Scene\s*\d+\s*:?/i).filter(s => s.trim().length > 20);
+            let success = false;
 
-                sceneBlocks.forEach((block, i) => {
-                    const script = extractField(block, "Script:");
-                    const imgMyan = extractField(block, "Image Prompt (Myanmar):");
-                    const imgEng = extractField(block, "Image Prompt (English):");
-                    const anim = extractField(block, "Animation:");
+            for(let model of models) {
+                statusTxt.innerText = `Connecting to ${model.split('/')[2]}...`;
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/${model}?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `Topic: "${topic}" အတွက် TikTok Storyboard Scene ၃ ခု ရေးပေးပါ။ မြန်မာလို Script ရော၊ English လို Image Prompt ရော ပါရမယ်။` }] }]
+                        })
+                    });
 
-                    container.innerHTML += `
-                        <div class="pro-card p-8 space-y-8 animate-fade-in">
-                            <div class="flex items-center justify-
+                    const data = await response.json();
+                    
+                    if (data.candidates && data.candidates[0]) {
+                        const content = data.candidates[0].content.parts[0].text;
+                        // ရိုးရိုးရှင်းရှင်းပဲ ပြသမယ် (Parsing Error ကင်းအောင်)
+                        list.innerHTML = `<div class="p-6 pro-card bg-black/50 text-slate-200 leading-relaxed whitespace-pre-line">${content}</div>`;
+                        success = true;
+                        break; 
+                    } else if (data.error) {
+                        console.error(data.error.message);
+                    }
+                } catch (e) {
+                    console.error("Fetch Error");
+                }
+            }
+
+            if (!success) {
+                list.innerHTML = `<div class="p-6 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">
+                    Error: AI နဲ့ ချိတ်ဆက်လို့မရပါ။ <br> (၁) VPN ချိတ်ထားလား စစ်ပါ။ <br> (၂) Internet Connection စစ်ပါ။
+                </div>`;
+            }
+
+            document.getElementById('resultArea').classList.remove('hidden');
+            loader.classList.add('hidden');
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
