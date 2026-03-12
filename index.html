@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Movie Talks | Elite Studio</title>
+    <title>Lynn Movie Talks | Final Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
@@ -15,13 +15,13 @@
 <body class="min-h-screen flex flex-col items-center justify-center p-5 text-center">
 
     <header class="mb-10">
-        <h1 class="text-6xl font-black gradient-text uppercase tracking-tighter">Lynn Movie Talks</h1>
-        <p class="text-slate-500 mt-2 text-[10px] tracking-[0.4em] font-bold uppercase italic">Stable AI Engine v1.0</p>
+        <h1 class="text-6xl font-black gradient-text uppercase tracking-tighter italic">LYNN STUDIO</h1>
+        <p class="text-slate-500 mt-2 text-[10px] tracking-[0.4em] font-bold uppercase">Universal AI Engine</p>
     </header>
 
     <div class="w-full max-w-2xl glass-panel p-10 rounded-[2.5rem] shadow-2xl">
         <div class="space-y-6">
-            <input type="text" id="topicInput" placeholder="Enter video topic..." 
+            <input type="text" id="topicInput" placeholder="Enter topic..." 
                    class="w-full p-5 rounded-2xl bg-black border border-slate-800 focus:border-amber-500 outline-none transition text-white text-center text-lg">
             
             <button onclick="generateEliteScript()" id="genBtn" 
@@ -31,18 +31,18 @@
         </div>
 
         <div id="loader" class="hidden mt-12">
-            <div class="inline-block w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-4 text-orange-500 font-bold text-[10px] tracking-widest animate-pulse uppercase">AI is creating your story...</p>
+            <div class="inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-4 text-orange-500 font-bold text-[10px] tracking-widest animate-pulse uppercase">Thinking...</p>
         </div>
 
         <div id="resultArea" class="hidden mt-12 p-8 bg-black/40 rounded-[2rem] border border-slate-800/50">
-            <div id="outputText" class="text-lg md:text-xl leading-[2.2] text-slate-200 whitespace-pre-line italic font-medium text-left"></div>
-            <button onclick="copyToClipboard()" class="mt-8 w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-xs font-bold transition uppercase">Copy Script</button>
+            <div id="outputText" class="text-lg md:text-xl leading-[2.2] text-slate-200 whitespace-pre-line text-left"></div>
+            <button onclick="copyToClipboard()" class="mt-8 w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-xs font-bold transition uppercase">Copy</button>
         </div>
     </div>
 
     <script>
-        // မင်းရဲ့ API Key ပါ
+        // အသစ်ထုတ်ထားတဲ့ API Key ကို ဒီမှာ ထည့်ပါ
         const API_KEY = "AIzaSyAtwMEKU9ig1-NRVdekA38lfwgRhIBjeqs"; 
 
         async function generateEliteScript() {
@@ -58,8 +58,8 @@
             loader.classList.remove('hidden');
             resArea.classList.add('hidden');
 
-            // Stable API URL ကို သုံးထားပါတယ် (v1/models/gemini-1.5-flash)
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // Model name ကို လုံးဝအခြေခံကျတဲ့ gemini-pro လို့ ပြောင်းထားပါတယ်
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
 
             try {
                 const response = await fetch(url, {
@@ -68,11 +68,7 @@
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `You are a professional Burmese storyteller for Lynn Movie Talks. Write a 1-minute emotional motivational script for the topic: "${topic}". 
-                                RULES: 
-                                1. Strictly use natural spoken Burmese (ending with 'tal', 'mal', 'pa' etc). 
-                                2. NO formal Burmese (ending with 'thee', 'par thee'). 
-                                3. Make it deep, inspiring, and conversational. Output only the Burmese text.`
+                                text: `မင်းက Lynn Movie Talks ရဲ့ Elite Storyteller ပါ။ Topic: "${topic}" အပေါ်မှာ ရင်ထဲရောက်မယ့် ၁ မိနစ်စာ Video Script တစ်ခု ရေးပေးပါ။ (သည်၊ ပါသည် မသုံးပါနဲ့၊ စကားပြော style ပဲ သုံးပါ)`
                             }]
                         }]
                     })
@@ -81,16 +77,16 @@
                 const data = await response.json();
                 
                 if (data.error) {
-                    output.innerText = "Error: " + data.error.message;
+                    output.innerText = "Error: " + data.error.message + "\n\nTip: Google AI Studio မှာ API Key အသစ်တစ်ခု ထပ်ထုတ်ကြည့်ပါ။";
                 } else if (data.candidates && data.candidates[0]) {
                     const script = data.candidates[0].content.parts[0].text;
                     output.innerText = script;
                 } else {
-                    output.innerText = "Something went wrong. Please try again.";
+                    output.innerText = "Check your VPN and Key.";
                 }
                 resArea.classList.remove('hidden');
             } catch (error) {
-                output.innerText = "Connection Error. Please check VPN (Singapore/USA).";
+                output.innerText = "Connection Failed. Change VPN to USA.";
                 resArea.classList.remove('hidden');
             } finally {
                 loader.classList.add('hidden');
@@ -100,7 +96,7 @@
 
         function copyToClipboard() {
             navigator.clipboard.writeText(document.getElementById('outputText').innerText);
-            alert("Copied to clipboard!");
+            alert("Copied!");
         }
     </script>
 </body>
