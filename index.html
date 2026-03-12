@@ -3,80 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Final Viral Creator</title>
+    <title>Lynn Studio | Premium AI Director</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@800&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f1f5f9; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 2rem; }
-        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); }
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@900&display=swap');
+        
+        :root {
+            --primary: #f97316;
+            --accent: #ef4444;
+        }
+
+        body { 
+            font-family: 'Pyidaungsu', sans-serif; 
+            background: radial-gradient(circle at top right, #1e1b4b, #020617);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Responsive Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .neon-btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .neon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.4);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        /* Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.6s ease-out forwards; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4">
+<body class="p-4 md:p-8">
 
-    <header class="py-12 text-center">
-        <h1 class="text-5xl font-black italic tracking-tighter text-orange-500 mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <p class="text-[9px] tracking-[0.5em] text-slate-500 uppercase font-black italic">V16 Final Stable Edition</p>
-    </header>
+    <div class="max-w-4xl mx-auto w-full">
+        <header class="text-center mb-12 animate-fade">
+            <h1 class="text-5xl md:text-7xl font-black italic tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500" style="font-family: 'Inter';">
+                LYNN STUDIO
+            </h1>
+            <p class="text-[10px] md:text-xs tracking-[0.5em] text-slate-500 uppercase font-bold">The Ultimate Responsive AI Director</p>
+        </header>
 
-    <div class="w-full max-w-2xl glass p-8 mb-10">
-        <textarea id="topicInput" rows="2" placeholder="ဥပမာ - ဘဝအောင်မြင်ရေး လျှို့ဝှက်ချက်..." 
-                  class="w-full p-5 rounded-2xl bg-black/50 border border-white/5 focus:border-orange-500 outline-none text-white text-center text-lg mb-6 transition-all"></textarea>
-        
-        <button onclick="startGeneration()" id="genBtn" 
-                class="w-full gradient-btn text-white font-black py-5 rounded-2xl active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Generate Content 🚀
-        </button>
-    </div>
+        <section class="glass-card p-6 md:p-10 mb-12 animate-fade" style="animation-delay: 0.2s;">
+            <div class="relative group">
+                <textarea id="topicInput" rows="3" 
+                    placeholder="ဗီဒီယိုခေါင်းစဉ် ရေးပါ... (ဥပမာ - ဘဝသင်ခန်းစာ)" 
+                    class="w-full bg-black/40 border border-white/10 rounded-2xl p-6 text-lg md:text-xl text-white placeholder:text-slate-600 focus:outline-none focus:border-orange-500/50 transition-all text-center"></textarea>
+            </div>
+            
+            <button onclick="runLynnAI()" id="genBtn" class="neon-btn w-full mt-8 py-5 rounded-2xl font-black text-xs md:text-sm uppercase tracking-widest active:scale-95">
+                Generate Elite Script 🎬
+            </button>
+        </section>
 
-    <div id="loader" class="hidden mb-10 text-orange-500 font-bold animate-pulse text-[10px] uppercase tracking-widest text-center">Director is thinking...</div>
+        <div id="loader" class="hidden text-center my-12 animate-pulse">
+            <div class="inline-block w-10 h-10 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
+            <p class="mt-4 text-[10px] text-orange-400 font-bold uppercase tracking-widest">AI is crafting your story...</p>
+        </div>
 
-    <div id="resultArea" class="hidden w-full max-w-2xl space-y-8 pb-32">
-        <div id="mainOutput" class="glass p-8 text-xl leading-[2.6] text-slate-200 font-medium italic whitespace-pre-line"></div>
+        <main id="resultArea" class="hidden space-y-8 animate-fade" style="animation-delay: 0.4s;">
+            <div class="glass-card p-8 md:p-12 relative overflow-hidden">
+                <div class="flex justify-between items-center mb-8 border-b border-white/10 pb-4">
+                    <span class="text-orange-500 font-black text-xs uppercase italic tracking-widest">Director's Script</span>
+                    <button onclick="copyScript()" class="text-[10px] font-bold text-slate-500 hover:text-orange-400 transition-colors uppercase">Copy Script</button>
+                </div>
+                <div id="mainOutput" class="text-xl md:text-2xl leading-[2.4] md:leading-[2.8] text-slate-200 font-medium italic whitespace-pre-line custom-scrollbar">
+                    </div>
+            </div>
+        </main>
     </div>
 
     <script>
         const API_KEY = "AIzaSyAeKPEvkZ-GWezN0RhyIGOtvbqmOi16eSE"; 
 
-        async function startGeneration() {
+        async function runLynnAI() {
             const topic = document.getElementById('topicInput').value;
-            if(!topic) return;
-
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
-            const resArea = document.getElementById('resultArea');
             const output = document.getElementById('mainOutput');
+            const resultArea = document.getElementById('resultArea');
 
+            if(!topic) return;
+            
             btn.disabled = true;
             loader.classList.remove('hidden');
-            resArea.classList.add('hidden');
+            resultArea.classList.add('hidden');
 
-            // URL ကို v1 (Stable) အဖြစ် ပြောင်းလဲထားပါတယ်
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            const modelEndpoints = ["gemini-1.5-flash", "gemini-3-flash-preview"];
+            let success = false;
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် ၁ မိနစ်စာ Script ကို Timestamp [00:00] format နဲ့ မြန်မာလို ရေးပေးပါ။` }] }]
-                    })
-                });
+            for (let modelName of modelEndpoints) {
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Storyteller ပါ။ Topic: "${topic}" အတွက် TikTok Script တစ်ခုကို [00:00] timestamp format နဲ့ မြန်မာလို ရေးပေးပါ။` }] }]
+                        })
+                    });
 
-                const data = await response.json();
-                
-                if (data.candidates && data.candidates[0]) {
-                    output.innerText = data.candidates[0].content.parts[0].text;
-                    resArea.classList.remove('hidden');
-                } else {
-                    alert("🚨 API Error: " + (data.error ? data.error.message : "Response Failed"));
-                }
-            } catch (e) {
-                alert("🚨 Network Error: VPN (Singapore/USA) ကို သေချာချိတ်ပြီး Browser ကို Refresh လုပ်ပါ။");
-            } finally {
-                loader.classList.add('hidden');
-                btn.disabled = false;
+                    const data = await response.json();
+                    if (data.candidates && data.candidates[0]) {
+                        output.innerText = data.candidates[0].content.parts[0].text;
+                        success = true;
+                        break;
+                    }
+                } catch (e) { console.error("Switching model..."); }
             }
+
+            if (success) {
+                resultArea.classList.remove('hidden');
+            } else {
+                alert("🚨 ခဏနားပြီးမှ ပြန်စမ်းကြည့်ပါဦး Linn!");
+            }
+
+            loader.classList.add('hidden');
+            btn.disabled = false;
+        }
+
+        function copyScript() {
+            const text = document.getElementById('mainOutput').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Script ကို Copy ကူးလိုက်ပါပြီ! ✅");
         }
     </script>
 </body>
