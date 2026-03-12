@@ -3,33 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Final Viral Creator</title>
+    <title>Lynn Studio | Master Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@800&display=swap');
         body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f1f5f9; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 2rem; }
-        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
     <header class="py-12 text-center">
-        <h1 class="text-5xl font-black italic tracking-tighter text-orange-500 mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <p class="text-[9px] tracking-[0.5em] text-slate-500 uppercase font-black italic">V16 Final Stable Edition</p>
+        <h1 class="text-5xl font-black italic text-orange-500 mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
+        <p class="text-[9px] tracking-[0.5em] text-slate-500 uppercase font-black">V17 Zero-Fail Engine</p>
     </header>
 
     <div class="w-full max-w-2xl glass p-8 mb-10">
-        <textarea id="topicInput" rows="2" placeholder="ဥပမာ - ဘဝအောင်မြင်ရေး လျှို့ဝှက်ချက်..." 
+        <textarea id="topicInput" rows="2" placeholder="Topic ကို ဒီမှာ ရေးပါ..." 
                   class="w-full p-5 rounded-2xl bg-black/50 border border-white/5 focus:border-orange-500 outline-none text-white text-center text-lg mb-6 transition-all"></textarea>
         
-        <button onclick="startGeneration()" id="genBtn" 
-                class="w-full gradient-btn text-white font-black py-5 rounded-2xl active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Generate Content 🚀
+        <button onclick="masterGenerate()" id="genBtn" 
+                class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-black py-5 rounded-2xl active:scale-95 transition-all uppercase tracking-widest text-xs">
+            Direct Final Script 🚀
         </button>
     </div>
 
-    <div id="loader" class="hidden mb-10 text-orange-500 font-bold animate-pulse text-[10px] uppercase tracking-widest text-center">Director is thinking...</div>
+    <div id="loader" class="hidden mb-10 text-orange-500 font-bold animate-pulse text-[10px] uppercase text-center">Director is attempting connection...</div>
 
     <div id="resultArea" class="hidden w-full max-w-2xl space-y-8 pb-32">
         <div id="mainOutput" class="glass p-8 text-xl leading-[2.6] text-slate-200 font-medium italic whitespace-pre-line"></div>
@@ -38,45 +37,58 @@
     <script>
         const API_KEY = "AIzaSyAeKPEvkZ-GWezN0RhyIGOtvbqmOi16eSE"; 
 
-        async function startGeneration() {
+        async function masterGenerate() {
             const topic = document.getElementById('topicInput').value;
-            if(!topic) return;
-
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
-            const resArea = document.getElementById('resultArea');
             const output = document.getElementById('mainOutput');
 
+            if(!topic) return;
             btn.disabled = true;
             loader.classList.remove('hidden');
-            resArea.classList.add('hidden');
+            document.getElementById('resultArea').classList.add('hidden');
 
-            // URL ကို v1 (Stable) အဖြစ် ပြောင်းလဲထားပါတယ်
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // Model အလုပ်လုပ်နိုင်ခြေရှိတဲ့ URL ၃ ခုလုံးကို စစ်ဆေးမယ့် စနစ်
+            const endpoints = [
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`
+            ];
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် ၁ မိနစ်စာ Script ကို Timestamp [00:00] format နဲ့ မြန်မာလို ရေးပေးပါ။` }] }]
-                    })
-                });
+            let success = false;
+            let lastError = "";
 
-                const data = await response.json();
-                
-                if (data.candidates && data.candidates[0]) {
-                    output.innerText = data.candidates[0].content.parts[0].text;
-                    resArea.classList.remove('hidden');
-                } else {
-                    alert("🚨 API Error: " + (data.error ? data.error.message : "Response Failed"));
+            for (let url of endpoints) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Viral Script တစ်ခုကို [00:00] Timestamp format နဲ့ မြန်မာလို ရေးပေးပါ။` }] }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.candidates && data.candidates[0]) {
+                        output.innerText = data.candidates[0].content.parts[0].text;
+                        success = true;
+                        break; // တစ်ခုအောင်မြင်ရင် ရပ်လိုက်မယ်
+                    } else {
+                        lastError = data.error ? data.error.message : "Response Failed";
+                    }
+                } catch (e) {
+                    lastError = e.message;
                 }
-            } catch (e) {
-                alert("🚨 Network Error: VPN (Singapore/USA) ကို သေချာချိတ်ပြီး Browser ကို Refresh လုပ်ပါ။");
-            } finally {
-                loader.classList.add('hidden');
-                btn.disabled = false;
             }
+
+            if (success) {
+                document.getElementById('resultArea').classList.remove('hidden');
+            } else {
+                alert("🚨 Error: " + lastError + "\n\nVPN (Singapore/USA) ချိတ်ထားဖို့နဲ့ Incognito Tab မှာ စမ်းဖို့ လိုအပ်ပါတယ်။");
+            }
+
+            loader.classList.add('hidden');
+            btn.disabled = false;
         }
     </script>
 </body>
