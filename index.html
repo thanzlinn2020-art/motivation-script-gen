@@ -3,111 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Movie Talks | TikTok Pro</title>
+    <title>Lynn Studio | TikTok Elite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@900&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #000000; color: #ffffff; }
-        .tiktok-border { border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(18, 18, 18, 0.8); backdrop-filter: blur(30px); }
-        .gradient-accent { background: linear-gradient(to right, #00f2ea, #ff0050); } /* TikTok Colors */
-        .neon-text { text-shadow: 0 0 10px rgba(255, 0, 80, 0.5); }
-        .image-container { position: relative; width: 100%; aspect-ratio: 9/16; background: #111; border-radius: 1.5rem; overflow: hidden; border: 1px solid #222; }
-        .loading-shimmer { background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+        .tiktok-card { background: #121212; border: 1px solid #222; border-radius: 2rem; overflow: hidden; }
+        .neon-glow { box-shadow: 0 0 20px rgba(0, 242, 234, 0.2); }
+        .gradient-bar { background: linear-gradient(to right, #00f2ea, #ff0050); }
+        .image-box { position: relative; width: 100%; aspect-ratio: 9/16; background: #0a0a0a; }
+        .glass-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
     <header class="py-10 text-center w-full max-w-md">
-        <h1 class="text-4xl font-black italic tracking-tighter neon-text mb-1" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <div class="h-1 w-20 gradient-accent mx-auto rounded-full mb-4"></div>
-        <p class="text-[9px] tracking-[0.5em] text-slate-500 uppercase font-bold">TikTok Content Engine v5.0</p>
+        <h1 class="text-4xl font-black italic tracking-tighter mb-1" style="font-family: 'Inter';">LYNN STUDIO</h1>
+        <div class="h-[3px] w-24 gradient-bar mx-auto rounded-full"></div>
+        <p class="text-[8px] tracking-[0.6em] text-slate-500 uppercase font-bold mt-3">Elite TikTok Visual Workflow</p>
     </header>
 
-    <div class="w-full max-w-md tiktok-border p-6 rounded-[2.5rem] mb-10 shadow-2xl">
-        <input type="text" id="topicInput" placeholder="TikTok Video Topic..." 
-               class="w-full p-4 rounded-2xl bg-black border border-white/10 focus:border-cyan-400 outline-none text-white text-center text-lg mb-4 transition-all">
+    <div class="w-full max-w-md tiktok-card p-6 mb-12 neon-glow">
+        <textarea id="topicInput" rows="2" placeholder="ဥပမာ - ဘဝအတွက် သင်ခန်းစာ..." 
+                  class="w-full p-4 rounded-xl bg-black border border-white/5 focus:border-cyan-400 outline-none text-white text-center text-md mb-4"></textarea>
         
-        <button onclick="generateTikTokContent()" id="genBtn" 
-                class="w-full gradient-accent text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-[0.2em] text-xs">
-            Create TikTok Storyboard
+        <button onclick="generateEliteWorkflow()" id="genBtn" 
+                class="w-full gradient-bar text-white font-black py-5 rounded-xl shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs">
+            Generate TikTok Storyboard
         </button>
     </div>
 
-    <div id="loader" class="hidden mb-10 text-center">
-        <div class="inline-block w-6 h-6 border-2 border-white/20 border-t-cyan-400 rounded-full animate-spin"></div>
-        <p class="mt-2 text-[10px] text-slate-400 uppercase tracking-widest animate-pulse">AI is rendering scenes...</p>
+    <div id="loader" class="hidden mb-12 text-center">
+        <div class="inline-block w-8 h-8 border-2 border-white/10 border-t-cyan-400 rounded-full animate-spin"></div>
+        <p class="mt-4 text-[9px] text-cyan-400 font-bold uppercase tracking-[0.3em] animate-pulse">Rendering 9:16 Scenes...</p>
     </div>
 
-    <div id="resultArea" class="hidden w-full max-w-md space-y-16 pb-20">
-        <div id="outputText" class="space-y-20"></div>
+    <div id="resultArea" class="hidden w-full max-w-md space-y-20 pb-32">
+        <div id="contentList" class="space-y-24"></div>
     </div>
 
     <script>
         const API_KEY = "AIzaSyAQVYjoYL3uIaDfCRdytAiNTheRfX8oOC4"; 
 
-        async function generateTikTokContent() {
+        async function generateEliteWorkflow() {
             const topic = document.getElementById('topicInput').value;
             if(!topic) return;
 
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
             const resArea = document.getElementById('resultArea');
-            const output = document.getElementById('outputText');
+            const list = document.getElementById('contentList');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resArea.classList.add('hidden');
-            output.innerHTML = "";
+            list.innerHTML = "";
 
             try {
-                // Step 1: Script with Gemini 3
+                // Step 1: Gemini 3 Flash ကနေ Script နဲ့ Visual Prompt ခိုင်းမယ်
                 const textRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Content Creator ပါ။ Topic: "${topic}" အတွက် TikTok မှာ Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ Scene တခုချင်းစီအတွက် "Script: [Burmese Dialogue] Visual: [Short English Prompt for realistic cinematic image]" format အတိုင်းပဲ ရေးပေးပါ။` }] }]
+                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Creator ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ format က - Scene 1 Script: [စာ] Prompt: [English Visual Prompt] အတိုင်းပဲ ရေးပေးပါ။` }] }]
                     })
                 });
 
-                const textData = await textRes.json();
-                const fullText = textData.candidates[0].content.parts[0].text;
-                const sceneBlocks = fullText.split(/Scene\s*\d+\s*:/i).filter(s => s.trim() !== "");
+                const data = await textRes.json();
+                const rawText = data.candidates[0].content.parts[0].text;
+                const scenes = rawText.split(/Scene\s*\d+\s*/i).filter(s => s.trim() !== "");
 
-                for (let [i, block] of sceneBlocks.entries()) {
-                    const scriptPart = block.split(/Visual:/i)[0].replace(/Script:/i, '').trim();
-                    const visualPrompt = block.split(/Visual:/i)[1]?.trim() || "Cinematic masterpiece, highly detailed";
+                for (let [index, scene] of scenes.entries()) {
+                    const script = scene.split(/Prompt:/i)[0].replace(/Script:/i, '').trim();
+                    const prompt = scene.split(/Prompt:/i)[1]?.trim() || "Cinematic masterpiece, realistic";
                     
-                    // TikTok 9:16 Image URL (Using Pollinations as reliable backup)
-                    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(visualPrompt + ", cinematic lighting, 8k, highly realistic, 9:16 aspect ratio")}?width=1080&height=1920&nologo=true&seed=${Math.floor(Math.random()*1000)}`;
+                    // Step 2: ပုံကို တိုက်ရိုက် Render ချမယ် (Pollinations AI - 9:16 Mode)
+                    const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", ultra realistic, cinematic, 8k, tiktok style, vertical 9:16")}?width=1080&height=1920&nologo=true&seed=${Math.floor(Math.random()*9999)}`;
 
                     const sceneHtml = `
                         <div class="space-y-6">
                             <div class="flex items-center gap-3">
-                                <span class="bg-white text-black px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">SCENE ${i+1}</span>
+                                <span class="bg-white text-black px-4 py-1 rounded-full text-[10px] font-black uppercase">SCENE ${index + 1}</span>
                                 <div class="h-[1px] flex-grow bg-white/10"></div>
                             </div>
-                            
-                            <div class="image-container shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-                                <img src="${imageUrl}" class="w-full h-full object-cover" onload="this.parentElement.classList.remove('loading-shimmer')" onerror="this.src='https://via.placeholder.com/1080x1920/111/333?text=Image+Generating...'">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                                <div class="absolute bottom-6 left-6 right-6">
-                                     <p class="text-cyan-400 font-mono text-[8px] uppercase tracking-widest mb-1">Visual Prompt</p>
-                                     <p class="text-[10px] text-white/50 leading-tight">${visualPrompt}</p>
+
+                            <div class="image-box rounded-[2.5rem] overflow-hidden border border-white/5">
+                                <img src="${imgUrl}" class="w-full h-full object-cover shadow-2xl" loading="lazy">
+                                <div class="absolute inset-0 glass-overlay flex flex-col justify-end p-6">
+                                    <p class="text-white/30 text-[8px] font-mono mb-1 uppercase tracking-widest">Visual Prompt</p>
+                                    <p class="text-[10px] text-white/60 leading-tight italic truncate">${prompt}</p>
                                 </div>
                             </div>
 
-                            <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
-                                <p class="text-xl leading-[1.8] text-white font-medium italic">${scriptPart}</p>
+                            <div class="p-6 rounded-3xl bg-white/5 border border-white/5">
+                                <p class="text-lg md:text-xl leading-[1.8] text-slate-100 font-medium italic">${script}</p>
                             </div>
                         </div>
                     `;
-                    output.innerHTML += sceneHtml;
+                    list.innerHTML += sceneHtml;
                 }
 
                 resArea.classList.remove('hidden');
             } catch (e) {
-                alert("Connection Error. Check VPN (Singapore/USA)");
+                alert("VPN (Singapore/USA) ချိတ်ဖို့ လိုအပ်ပါတယ်။");
             } finally {
                 loader.classList.add('hidden');
                 btn.disabled = false;
