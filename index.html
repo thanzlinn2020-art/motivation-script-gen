@@ -3,109 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | TikTok Elite</title>
+    <title>Lynn Studio | Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@900&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-        .tiktok-card { background: #121212; border: 1px solid #222; border-radius: 2rem; overflow: hidden; }
-        .neon-glow { box-shadow: 0 0 20px rgba(0, 242, 234, 0.2); }
-        .gradient-bar { background: linear-gradient(to right, #00f2ea, #ff0050); }
-        .image-box { position: relative; width: 100%; aspect-ratio: 9/16; background: #0a0a0a; }
-        .glass-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); }
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
+        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #fff; }
+        .tiktok-vibe { background: #111; border: 1px solid #222; border-radius: 2rem; }
+        .img-9-16 { width: 100%; aspect-ratio: 9/16; background: #0a0a0a; border-radius: 1.5rem; object-cover: cover; border: 1px solid #333; }
+        .gradient-btn { background: linear-gradient(to right, #00f2ea, #ff0050); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <header class="py-10 text-center w-full max-w-md">
-        <h1 class="text-4xl font-black italic tracking-tighter mb-1" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <div class="h-[3px] w-24 gradient-bar mx-auto rounded-full"></div>
-        <p class="text-[8px] tracking-[0.6em] text-slate-500 uppercase font-bold mt-3">Elite TikTok Visual Workflow</p>
+    <header class="py-8 text-center">
+        <h1 class="text-4xl font-black italic tracking-tighter text-white">LYNN STUDIO</h1>
+        <div class="h-1 w-20 gradient-btn mx-auto mt-2 rounded-full"></div>
     </header>
 
-    <div class="w-full max-w-md tiktok-card p-6 mb-12 neon-glow">
-        <textarea id="topicInput" rows="2" placeholder="ဥပမာ - ဘဝအတွက် သင်ခန်းစာ..." 
-                  class="w-full p-4 rounded-xl bg-black border border-white/5 focus:border-cyan-400 outline-none text-white text-center text-md mb-4"></textarea>
-        
-        <button onclick="generateEliteWorkflow()" id="genBtn" 
-                class="w-full gradient-bar text-white font-black py-5 rounded-xl shadow-lg active:scale-95 transition-all uppercase tracking-widest text-xs">
-            Generate TikTok Storyboard
+    <div class="w-full max-w-md tiktok-vibe p-6 mb-10">
+        <input type="text" id="topicInput" placeholder="TikTok Topic..." 
+               class="w-full p-4 rounded-xl bg-black border border-white/10 text-white text-center mb-4 outline-none">
+        <button onclick="generateFinal()" id="genBtn" 
+                class="w-full gradient-btn text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs active:scale-95 transition-all">
+            Generate Storyboard
         </button>
     </div>
 
-    <div id="loader" class="hidden mb-12 text-center">
-        <div class="inline-block w-8 h-8 border-2 border-white/10 border-t-cyan-400 rounded-full animate-spin"></div>
-        <p class="mt-4 text-[9px] text-cyan-400 font-bold uppercase tracking-[0.3em] animate-pulse">Rendering 9:16 Scenes...</p>
-    </div>
+    <div id="loader" class="hidden mb-10 text-cyan-400 text-[10px] font-bold animate-pulse">RENDERING SCENES...</div>
 
-    <div id="resultArea" class="hidden w-full max-w-md space-y-20 pb-32">
-        <div id="contentList" class="space-y-24"></div>
+    <div id="resultArea" class="hidden w-full max-w-md space-y-16 pb-20 text-left">
+        <div id="sceneContainer" class="space-y-20"></div>
     </div>
 
     <script>
         const API_KEY = "AIzaSyAQVYjoYL3uIaDfCRdytAiNTheRfX8oOC4"; 
 
-        async function generateEliteWorkflow() {
+        async function generateFinal() {
             const topic = document.getElementById('topicInput').value;
             if(!topic) return;
 
             const btn = document.getElementById('genBtn');
             const loader = document.getElementById('loader');
-            const resArea = document.getElementById('resultArea');
-            const list = document.getElementById('contentList');
+            const container = document.getElementById('sceneContainer');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
-            resArea.classList.add('hidden');
-            list.innerHTML = "";
+            document.getElementById('resultArea').classList.add('hidden');
+            container.innerHTML = "";
 
             try {
-                // Step 1: Gemini 3 Flash ကနေ Script နဲ့ Visual Prompt ခိုင်းမယ်
-                const textRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Creator ပါ။ Topic: "${topic}" အတွက် TikTok Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ format က - Scene 1 Script: [စာ] Prompt: [English Visual Prompt] အတိုင်းပဲ ရေးပေးပါ။` }] }]
+                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Creator ပါ။ Topic: "${topic}" အတွက် TikTok Scene ၃ ခုစာ Storyboard ရေးပေးပါ။ format က - Scene 1 Script: [စာ] Visual: [Short English Subject] အတိုင်းပဲ ရေးပေးပါ။` }] }]
                     })
                 });
 
-                const data = await textRes.json();
+                const data = await res.json();
                 const rawText = data.candidates[0].content.parts[0].text;
                 const scenes = rawText.split(/Scene\s*\d+\s*/i).filter(s => s.trim() !== "");
 
-                for (let [index, scene] of scenes.entries()) {
-                    const script = scene.split(/Prompt:/i)[0].replace(/Script:/i, '').trim();
-                    const prompt = scene.split(/Prompt:/i)[1]?.trim() || "Cinematic masterpiece, realistic";
+                scenes.forEach((scene, i) => {
+                    const script = scene.split(/Visual:/i)[0].replace(/Script:/i, '').trim();
+                    const visual = scene.split(/Visual:/i)[1]?.trim() || "cinematic movie scene";
                     
-                    // Step 2: ပုံကို တိုက်ရိုက် Render ချမယ် (Pollinations AI - 9:16 Mode)
-                    const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ", ultra realistic, cinematic, 8k, tiktok style, vertical 9:16")}?width=1080&height=1920&nologo=true&seed=${Math.floor(Math.random()*9999)}`;
+                    // Pollinations image with a backup seed and direct width/height
+                    const imgUrl = `https://pollinations.ai/p/${encodeURIComponent(visual + ", 8k, cinematic, portrait")}?width=1080&height=1920&seed=${Math.floor(Math.random()*1000)}`;
 
-                    const sceneHtml = `
+                    container.innerHTML += `
                         <div class="space-y-6">
-                            <div class="flex items-center gap-3">
-                                <span class="bg-white text-black px-4 py-1 rounded-full text-[10px] font-black uppercase">SCENE ${index + 1}</span>
-                                <div class="h-[1px] flex-grow bg-white/10"></div>
-                            </div>
-
-                            <div class="image-box rounded-[2.5rem] overflow-hidden border border-white/5">
-                                <img src="${imgUrl}" class="w-full h-full object-cover shadow-2xl" loading="lazy">
-                                <div class="absolute inset-0 glass-overlay flex flex-col justify-end p-6">
-                                    <p class="text-white/30 text-[8px] font-mono mb-1 uppercase tracking-widest">Visual Prompt</p>
-                                    <p class="text-[10px] text-white/60 leading-tight italic truncate">${prompt}</p>
-                                </div>
-                            </div>
-
-                            <div class="p-6 rounded-3xl bg-white/5 border border-white/5">
-                                <p class="text-lg md:text-xl leading-[1.8] text-slate-100 font-medium italic">${script}</p>
+                            <h3 class="text-[10px] font-black uppercase text-slate-500 tracking-widest">Scene ${i+1}</h3>
+                            <img src="${imgUrl}" class="img-9-16 shadow-2xl" onerror="this.src='https://source.unsplash.com/1080x1920/?movie,${encodeURIComponent(visual)}'">
+                            <div class="p-5 rounded-2xl bg-white/5 border border-white/5">
+                                <p class="text-lg leading-relaxed text-slate-200 italic font-medium">${script}</p>
                             </div>
                         </div>
                     `;
-                    list.innerHTML += sceneHtml;
-                }
+                });
 
-                resArea.classList.remove('hidden');
+                document.getElementById('resultArea').classList.remove('hidden');
             } catch (e) {
-                alert("VPN (Singapore/USA) ချိတ်ဖို့ လိုအပ်ပါတယ်။");
+                alert("VPN (Singapore/USA) လိုအပ်ပါတယ်။");
             } finally {
                 loader.classList.add('hidden');
                 btn.disabled = false;
