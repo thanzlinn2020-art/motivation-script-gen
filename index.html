@@ -1,146 +1,231 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Master Cinema Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@900&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-        .master-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 2.5rem; }
-        .neon-line { height: 2px; background: linear-gradient(to right, transparent, #f97316, #ef4444, transparent); }
-        .input-focus:focus { border-color: #f97316; box-shadow: 0 0 20px rgba(249, 115, 22, 0.1); }
-        .scene-box { background: linear-gradient(145deg, #0d0d0d, #050505); border-radius: 2rem; border: 1px solid #111; }
-        .prompt-label { font-size: 8px; font-weight: 900; letter-spacing: 0.2em; color: #444; text-transform: uppercase; }
-        .copy-pill { cursor: pointer; font-size: 9px; font-weight: 900; padding: 4px 10px; border-radius: 6px; background: #111; color: #666; transition: 0.3s; }
-        .copy-pill:active { background: #f97316; color: #000; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Motivation Creator</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.glass{
+background: rgba(255,255,255,0.05);
+backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.1);
+}
+</style>
+
 </head>
-<body class="min-h-screen flex flex-col items-center p-5">
 
-    <header class="py-16 text-center animate-fade-in">
-        <h1 class="text-5xl font-black italic tracking-tighter mb-2" style="font-family: 'Inter';">LYNN STUDIO</h1>
-        <div class="neon-line w-48 mx-auto mb-4"></div>
-        <p class="text-[9px] tracking-[0.6em] text-slate-600 uppercase font-black">AI Cinema & Visual Storyboard Engine</p>
-    </header>
+<body class="bg-gradient-to-br from-black via-zinc-900 to-black text-white min-h-screen flex items-center justify-center p-6">
 
-    <div class="w-full max-w-2xl master-card p-8 mb-16 shadow-2xl border-t border-white/5">
-        <textarea id="topicInput" rows="2" placeholder="Topic: ဘဝအောင်မြင်ရေး လျှို့ဝှက်ချက်..." 
-                  class="w-full p-6 rounded-3xl bg-black border border-white/5 input-focus outline-none text-white text-center text-xl mb-8 transition-all placeholder:text-slate-800"></textarea>
-        
-        <button onclick="buildStoryboard()" id="genBtn" 
-                class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-black py-6 rounded-3xl shadow-lg active:scale-95 transition-all uppercase tracking-[0.3em] text-xs">
-            Direct Storyboard 🎬
-        </button>
-    </div>
+<div class="max-w-3xl w-full glass rounded-2xl p-8">
 
-    <div id="loader" class="hidden mb-16 text-center">
-        <div class="inline-block w-8 h-8 border-2 border-white/5 border-t-orange-500 rounded-full animate-spin"></div>
-        <p class="mt-4 text-[10px] text-orange-500 font-bold uppercase tracking-[0.4em] animate-pulse">Director is framing scenes...</p>
-    </div>
+<h1 class="text-3xl font-bold text-center mb-2">
+AI Motivation Creator
+</h1>
 
-    <div id="resultArea" class="hidden w-full max-w-3xl space-y-16 pb-40">
-        <div id="sceneContainer" class="space-y-20"></div>
-    </div>
+<p class="text-gray-400 text-center mb-8">
+Generate viral Burmese motivation scripts for TikTok / Shorts
+</p>
 
-    <script>
-        const API_KEY = "AIzaSyAXZgowXrlzhNSXAsQ6RbuLljpbXw5bqkg"; 
+<!-- API KEY -->
 
-        async function buildStoryboard() {
-            const topic = document.getElementById('topicInput').value;
-            if(!topic) return;
+<div class="mb-4">
+<label class="text-sm text-gray-400">Groq API Key</label>
+<input id="apikey"
+class="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-700"
+placeholder="Paste your Groq API key">
+</div>
 
-            const btn = document.getElementById('genBtn');
-            const loader = document.getElementById('loader');
-            const resArea = document.getElementById('resultArea');
-            const container = document.getElementById('sceneContainer');
+<!-- TOPIC -->
 
-            btn.disabled = true;
-            loader.classList.remove('hidden');
-            resArea.classList.add('hidden');
-            container.innerHTML = "";
+<div class="mb-4">
+<label class="text-sm text-gray-400">Topic</label>
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Storyboard ၃ ခုစာ ရေးပေးပါ။ format က Scene တစ်ခုချင်းစီအတွက် အောက်ပါအတိုင်း သေချာခွဲပေးပါ -
-                        Scene [နံပါတ်]:
-                        Script: [ဗမာစကားပြော Script]
-                        Concept: [ပုံဖော်ရမယ့် မြင်ကွင်းကို မြန်မာလို ရှင်းပြချက်]
-                        Prompt: [English Cinematic Prompt for AI]
-                        Animation: [Movement Instruction in English]` }] }]
-                    })
-                });
+<div class="flex gap-2">
+<input id="topic"
+class="flex-1 p-3 rounded-lg bg-zinc-900 border border-zinc-700"
+placeholder="Example: Never Give Up">
 
-                const data = await response.json();
-                if(!data.candidates) throw new Error(data.error?.message || "Check VPN");
+<button onclick="generateTopic()"
+class="bg-zinc-700 px-4 rounded-lg hover:bg-zinc-600">
+AI Topic
+</button>
+</div>
 
-                const rawText = data.candidates[0].content.parts[0].text;
-                const scenes = rawText.split(/Scene\s*\d+\s*:?/i).filter(s => s.trim().length > 30);
+</div>
 
-                scenes.forEach((block, i) => {
-                    const script = get(block, "Script:");
-                    const concept = get(block, "Concept:");
-                    const prompt = get(block, "Prompt:");
-                    const anim = get(block, "Animation:");
+<!-- GENERATE SCRIPT -->
 
-                    container.innerHTML += `
-                        <div class="scene-box p-10 space-y-10 shadow-2xl">
-                            <div class="flex justify-between items-center border-b border-white/5 pb-6">
-                                <span class="text-[10px] font-black uppercase text-orange-500 tracking-widest italic">Scene 0${i+1}</span>
-                                <span class="text-[8px] text-slate-700 font-mono tracking-[0.4em] uppercase">Cinema Standard</span>
-                            </div>
+<button
+onclick="generateScript()"
+class="w-full bg-white text-black font-semibold py-3 rounded-lg hover:bg-gray-200 transition">
+Generate Script
+</button>
 
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center"><p class="prompt-label !text-orange-500/60">Burmese Voiceover</p><span class="copy-pill" onclick="copy(this)">COPY</span></div>
-                                <p class="text-2xl leading-relaxed text-slate-100 italic font-medium select-all">${script}</p>
-                            </div>
+<!-- CAPTION -->
 
-                            <div class="space-y-8 bg-black/50 p-6 rounded-3xl border border-white/5">
-                                <div>
-                                    <p class="prompt-label mb-2">Visual Concept (MM)</p>
-                                    <p class="text-sm text-slate-400 leading-relaxed">${concept}</p>
-                                </div>
-                                <div class="h-[1px] bg-white/5"></div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-3"><p class="prompt-label !text-cyan-500/50">Image Prompt (EN)</p><span class="copy-pill" onclick="copy(this)">COPY</span></div>
-                                    <p class="text-xs text-slate-300 font-mono leading-relaxed select-all">${prompt}</p>
-                                </div>
-                                <div class="h-[1px] bg-white/5"></div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-3"><p class="prompt-label !text-pink-500/50">Animation Dynamics</p><span class="copy-pill" onclick="copy(this)">COPY</span></div>
-                                    <p class="text-xs text-slate-300 font-mono italic select-all">${anim}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
+<button
+onclick="generateCaption()"
+class="w-full mt-3 bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-500 transition">
+Generate TikTok Caption
+</button>
 
-                resArea.classList.remove('hidden');
-            } catch (e) {
-                alert("🚨 Error: " + e.message + "\n\nVPN (Singapore/USA) ချိတ်ထားဖို့ လိုအပ်ပါတယ်။");
-            } finally {
-                loader.classList.add('hidden');
-                btn.disabled = false;
-            }
-        }
+<!-- RESULT -->
 
-        function get(text, field) {
-            const regex = new RegExp(`${field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*([\\s\\S]*?)(?=\\n\\w+:|$)`, 'i');
-            const match = text.match(regex);
-            return match ? match[1].trim() : "Extracting...";
-        }
+<div class="mt-8 glass rounded-xl p-5 relative">
 
-        function copy(btn) {
-            const text = btn.parentElement.nextElementSibling.innerText;
-            navigator.clipboard.writeText(text);
-            const original = btn.innerText;
-            btn.innerText = "DONE!";
-            setTimeout(() => btn.innerText = original, 1500);
-        }
-    </script>
+<div class="absolute top-3 right-3 flex gap-2">
+
+<button onclick="copyScript()"
+class="text-xs bg-white text-black px-3 py-1 rounded hover:bg-gray-200">
+Copy
+</button>
+
+<button onclick="downloadScript()"
+class="text-xs bg-green-500 px-3 py-1 rounded hover:bg-green-400">
+Download
+</button>
+
+</div>
+
+<pre id="result" class="whitespace-pre-wrap text-gray-200">
+Your generated content will appear here...
+</pre>
+
+</div>
+
+</div>
+
+<script>
+
+async function callGroq(messages){
+
+const apiKey = document.getElementById("apikey").value;
+
+const response = await fetch(
+"https://api.groq.com/openai/v1/chat/completions",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer " + apiKey
+},
+body:JSON.stringify({
+model:"llama3-70b-8192",
+messages:messages
+})
+});
+
+const data = await response.json();
+
+return data.choices?.[0]?.message?.content || "Error generating text.";
+
+}
+
+async function generateScript(){
+
+const topic = document.getElementById("topic").value;
+const result = document.getElementById("result");
+
+result.textContent="Generating script...";
+
+const text = await callGroq([
+
+{
+role:"system",
+content:"You are a motivational speaker. Write a 1-minute storytelling script in Burmese. Structure it with a Hook, a Struggle story, a Lesson, and a CTA. Total words: 150-180."
+},
+
+{
+role:"user",
+content:`Topic: ${topic}. Include time markers like [00:00], [00:10], etc.`
+}
+
+]);
+
+result.textContent=text;
+
+}
+
+async function generateTopic(){
+
+const result = document.getElementById("result");
+
+result.textContent="Generating viral topic...";
+
+const text = await callGroq([
+
+{
+role:"system",
+content:"You generate viral motivational video topics."
+},
+
+{
+role:"user",
+content:"Give me 5 viral motivational video topics in Burmese."
+}
+
+]);
+
+result.textContent=text;
+
+}
+
+async function generateCaption(){
+
+const topic = document.getElementById("topic").value;
+const result = document.getElementById("result");
+
+result.textContent="Generating caption...";
+
+const text = await callGroq([
+
+{
+role:"system",
+content:"You create viral TikTok captions."
+},
+
+{
+role:"user",
+content:`Write a viral TikTok caption in Burmese for a motivational video about: ${topic}`
+}
+
+]);
+
+result.textContent=text;
+
+}
+
+function copyScript(){
+
+const text=document.getElementById("result").textContent;
+
+navigator.clipboard.writeText(text);
+
+alert("Copied!");
+
+}
+
+function downloadScript(){
+
+const text=document.getElementById("result").textContent;
+
+const blob=new Blob([text],{type:"text/plain"});
+
+const url=URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+
+a.href=url;
+a.download="motivation-script.txt";
+
+a.click();
+
+}
+
+</script>
+
 </body>
 </html>
