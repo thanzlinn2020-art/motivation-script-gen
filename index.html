@@ -93,62 +93,73 @@
                         <div class="pro-card p-8 space-y-8 shadow-xl border-l-4 border-l-orange-500">
                             <div class="flex items-center justify-between border-b border-white/5 pb-4">
                                 <span class="bg-orange-500 text-black px-4 py-1 rounded-md text-[10px] font-black uppercase">SCENE ${i+1}</span>
-                                <span class="text-[9px] text-slate-600 font-mono tracking-widest">LYNN MOVIE TALKS</span>
-                            </div>
+<script>
+    // မင်းရဲ့ API Key အသစ်
+    const API_KEY = "AIzaSyAXZgowXrlzhNSXAsQ6RbuLljpbXw5bqkg"; 
 
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center"><p class="text-[10px] text-orange-500 font-black uppercase tracking-[0.2em]">Burmese Script</p><button class="copy-btn" onclick="copyThis(this)">COPY</button></div>
-                                <p class="text-xl leading-[1.8] text-slate-100 font-medium italic select-all">${script}</p>
-                            </div>
+    async function startProduction() {
+        const topic = document.getElementById('topicInput').value;
+        if(!topic) return;
 
-                            <div class="inner-box p-6 space-y-6 bg-black/40">
-                                <div>
-                                    <p class="text-[8px] text-slate-500 font-black uppercase mb-2">Visual Concept (Myanmar)</p>
-                                    <p class="text-sm text-slate-400 leading-relaxed">${concept}</p>
-                                </div>
-                                <div class="h-[1px] bg-white/5"></div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-2"><p class="text-[8px] text-cyan-500 font-black uppercase">AI Image Prompt (English)</p><button class="copy-btn" onclick="copyThis(this)">COPY</button></div>
-                                    <p class="text-xs text-slate-300 font-mono leading-relaxed select-all">${prompt}</p>
-                                </div>
-                                <div class="h-[1px] bg-white/5"></div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-2"><p class="text-[8px] text-pink-500 font-black uppercase">Animation Movement</p><button class="copy-btn" onclick="copyThis(this)">COPY</button></div>
-                                    <p class="text-xs text-slate-300 font-mono leading-relaxed select-all">${anim}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
+        const btn = document.getElementById('genBtn');
+        const loader = document.getElementById('loader');
+        const resArea = document.getElementById('resultArea');
+        const container = document.getElementById('sceneContainer');
 
-                resArea.classList.remove('hidden');
-            } catch (e) {
-                alert("🚨 Error: " + e.message + "\n\nVPN ကို Singapore/USA ချိတ်ထားဖို့ သေချာပါစေ။");
-            } finally {
-                loader.classList.add('hidden');
-                btn.disabled = false;
+        btn.disabled = true;
+        loader.classList.remove('hidden');
+        resArea.classList.add('hidden');
+        container.innerHTML = "";
+
+        // URL ကို v1 (Stable) ပြောင်းပြီး Model Name ကို gemini-1.5-flash လို့ပဲ သုံးပါမယ်
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Director ပါ။ Topic: "${topic}" အတွက် TikTok Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ Scene တခုချင်းစီအတွက် Script: [ဗမာစာ]၊ Concept: [ဗမာစာ]၊ Prompt: [English] အဖြစ် ခွဲရေးပေးပါ။` }] }]
+                })
+            });
+
+            const data = await response.json();
+            
+            // Error Message ကို အသေးစိတ်စစ်ဆေးမယ်
+            if (data.error) {
+                throw new Error(data.error.message);
             }
-        }
 
-        function extractField(text, field) {
-            const regex = new RegExp(`${field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*([\\s\\S]*?)(?=\\n\\w+:|$)`, 'i');
-            const match = text.match(regex);
-            return match ? match[1].trim() : "Data missing...";
+            if (data.candidates && data.candidates[0]) {
+                const rawText = data.candidates[0].content.parts[0].text;
+                displayResults(rawText); // စာသားတွေကို UI မှာ ပြမယ့် function
+            }
+        } catch (e) {
+            alert("🚨 Error: " + e.message + "\n\nVPN (Singapore/USA) ချိတ်ထားဖို့ လိုအပ်ပါတယ်။");
+        } finally {
+            loader.classList.add('hidden');
+            btn.disabled = false;
         }
+    }
 
-        function copyThis(btn) {
-            const text = btn.parentElement.nextElementSibling.innerText;
-            navigator.clipboard.writeText(text);
-            const original = btn.innerText;
-            btn.innerText = "DONE!";
-            btn.style.borderColor = "#f97316";
-            btn.style.color = "#f97316";
-            setTimeout(() => {
-                btn.innerText = original;
-                btn.style.borderColor = "#1e293b";
-                btn.style.color = "#64748b";
-            }, 1500);
-        }
-    </script>
+    function displayResults(rawText) {
+        const container = document.getElementById('sceneContainer');
+        const resArea = document.getElementById('resultArea');
+        
+        // ရိုးရှင်းတဲ့ Parsing စနစ်
+        const scenes = rawText.split(/Scene\s*\d+\s*:?/i).filter(s => s.trim().length > 10);
+        
+        scenes.forEach((block, i) => {
+            container.innerHTML += `
+                <div class="p-6 bg-[#0d0d0d] border border-[#222] rounded-3xl mb-8">
+                    <p class="text-orange-500 font-black text-xs mb-4 uppercase">Scene ${i+1}</p>
+                    <p class="text-slate-200 leading-relaxed whitespace-pre-line">${block.trim()}</p>
+                </div>
+            `;
+        });
+        resArea.classList.remove('hidden');
+    }
+</script>
+
 </body>
 </html>
