@@ -3,49 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Studio | Nano Banana Pro</title>
+    <title>Lynn Movie Talks | TikTok Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f8fafc; }
-        .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gradient-btn { background: linear-gradient(135deg, #f97316, #ef4444); }
-        .image-placeholder { background: #0f172a; border: 2px dashed #1e293b; aspect-ratio: 16/9; }
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&family=Inter:wght@900&display=swap');
+        body { font-family: 'Pyidaungsu', sans-serif; background: #000000; color: #ffffff; }
+        .tiktok-border { border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(18, 18, 18, 0.8); backdrop-filter: blur(30px); }
+        .gradient-accent { background: linear-gradient(to right, #00f2ea, #ff0050); } /* TikTok Colors */
+        .neon-text { text-shadow: 0 0 10px rgba(255, 0, 80, 0.5); }
+        .image-container { position: relative; width: 100%; aspect-ratio: 9/16; background: #111; border-radius: 1.5rem; overflow: hidden; border: 1px solid #222; }
+        .loading-shimmer { background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-6 text-center">
+<body class="min-h-screen flex flex-col items-center p-4">
 
-    <header class="py-10">
-        <h1 class="text-6xl font-black text-orange-500 italic tracking-tighter">LYNN STUDIO</h1>
-        <p class="text-slate-500 mt-2 text-[10px] tracking-[0.4em] font-bold uppercase">Nano Banana Image Generation v4.0</p>
+    <header class="py-10 text-center w-full max-w-md">
+        <h1 class="text-4xl font-black italic tracking-tighter neon-text mb-1" style="font-family: 'Inter';">LYNN STUDIO</h1>
+        <div class="h-1 w-20 gradient-accent mx-auto rounded-full mb-4"></div>
+        <p class="text-[9px] tracking-[0.5em] text-slate-500 uppercase font-bold">TikTok Content Engine v5.0</p>
     </header>
 
-    <div class="w-full max-w-3xl glass-card p-8 rounded-[2.5rem] shadow-2xl">
-        <div class="space-y-6">
-            <input type="text" id="topicInput" placeholder="ဥပမာ - ဘဝအတွက် သင်ခန်းစာ..." 
-                   class="w-full p-5 rounded-2xl bg-black border border-slate-800 focus:border-orange-500 outline-none text-white text-center text-lg">
-            
-            <button onclick="generateNanoContent()" id="genBtn" 
-                    class="w-full gradient-btn text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-widest text-sm">
-                Generate Elite Script & Visuals 🚀
-            </button>
-        </div>
+    <div class="w-full max-w-md tiktok-border p-6 rounded-[2.5rem] mb-10 shadow-2xl">
+        <input type="text" id="topicInput" placeholder="TikTok Video Topic..." 
+               class="w-full p-4 rounded-2xl bg-black border border-white/10 focus:border-cyan-400 outline-none text-white text-center text-lg mb-4 transition-all">
+        
+        <button onclick="generateTikTokContent()" id="genBtn" 
+                class="w-full gradient-accent text-white font-black py-5 rounded-2xl shadow-lg active:scale-95 transition-all uppercase tracking-[0.2em] text-xs">
+            Create TikTok Storyboard
+        </button>
+    </div>
 
-        <div id="loader" class="hidden mt-10">
-            <div class="inline-block w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p id="status" class="mt-4 text-orange-400 font-bold text-[10px] tracking-widest animate-pulse">NANO BANANA IS PROCESSING...</p>
-        </div>
+    <div id="loader" class="hidden mb-10 text-center">
+        <div class="inline-block w-6 h-6 border-2 border-white/20 border-t-cyan-400 rounded-full animate-spin"></div>
+        <p class="mt-2 text-[10px] text-slate-400 uppercase tracking-widest animate-pulse">AI is rendering scenes...</p>
+    </div>
 
-        <div id="resultArea" class="hidden mt-12 space-y-10 text-left">
-            <h2 class="text-2xl font-black text-slate-100 uppercase italic">Storyboard Result</h2>
-            <div id="outputText" class="space-y-10"></div>
-        </div>
+    <div id="resultArea" class="hidden w-full max-w-md space-y-16 pb-20">
+        <div id="outputText" class="space-y-20"></div>
     </div>
 
     <script>
         const API_KEY = "AIzaSyAQVYjoYL3uIaDfCRdytAiNTheRfX8oOC4"; 
 
-        async function generateNanoContent() {
+        async function generateTikTokContent() {
             const topic = document.getElementById('topicInput').value;
             if(!topic) return;
 
@@ -53,61 +54,60 @@
             const loader = document.getElementById('loader');
             const resArea = document.getElementById('resultArea');
             const output = document.getElementById('outputText');
-            const status = document.getElementById('status');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
             resArea.classList.add('hidden');
             output.innerHTML = "";
 
-            // Nano Banana (Image generation model) နဲ့ Gemini 3 (Text model) ကို သုံးထားပါတယ်
-            const textModel = "v1beta/models/gemini-3-flash-preview:generateContent";
-            
             try {
-                // Step 1: Generate Script & Image Prompts
-                status.innerText = "WRITING SCRIPT...";
-                const textRes = await fetch(`https://generativelanguage.googleapis.com/${textModel}?key=${API_KEY}`, {
+                // Step 1: Script with Gemini 3
+                const textRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Storyteller ပါ။ Topic: "${topic}" အတွက် Scene ၃ ခုစာ Video Script ကို မြန်မာလို ရေးပေးပါ။ Scene တခုချင်းစီအတွက် "Scene 1: [Script] Visual: [English Prompt]" ဆိုတဲ့ format အတိုင်း ရေးပေးပါ။` }] }]
+                        contents: [{ parts: [{ text: `မင်းက Lynn Movie Talks ရဲ့ Elite Content Creator ပါ။ Topic: "${topic}" အတွက် TikTok မှာ Viral ဖြစ်မယ့် Scene ၃ ခုစာ Storyboard ကို မြန်မာလို ရေးပေးပါ။ Scene တခုချင်းစီအတွက် "Script: [Burmese Dialogue] Visual: [Short English Prompt for realistic cinematic image]" format အတိုင်းပဲ ရေးပေးပါ။` }] }]
                     })
                 });
 
                 const textData = await textRes.json();
                 const fullText = textData.candidates[0].content.parts[0].text;
-                
-                // Scene တွေကို ခွဲထုတ်မယ်
                 const sceneBlocks = fullText.split(/Scene\s*\d+\s*:/i).filter(s => s.trim() !== "");
 
                 for (let [i, block] of sceneBlocks.entries()) {
-                    const dialogue = block.split(/Visual:/i)[0].trim();
-                    const visualPrompt = block.split(/Visual:/i)[1]?.trim() || "Cinematic movie scene";
-
-                    // Step 2: Generate Image for each scene using Nano Banana
-                    status.innerText = `GENERATING IMAGE FOR SCENE ${i+1}...`;
+                    const scriptPart = block.split(/Visual:/i)[0].replace(/Script:/i, '').trim();
+                    const visualPrompt = block.split(/Visual:/i)[1]?.trim() || "Cinematic masterpiece, highly detailed";
                     
-                    const sceneDiv = document.createElement('div');
-                    sceneDiv.className = "space-y-4 p-6 rounded-3xl bg-black/40 border border-slate-800";
-                    sceneDiv.innerHTML = `
-                        <div class="flex justify-between text-xs font-black text-orange-500 uppercase tracking-widest">
-                            <span>Scene ${i+1}</span>
-                            <span>Visual AI: Nano Banana</span>
-                        </div>
-                        <div class="image-placeholder rounded-2xl flex items-center justify-center overflow-hidden">
-                             <p class="text-[10px] text-slate-700 p-4 text-center">Image generation requested for: ${visualPrompt}</p>
-                        </div>
-                        <p class="text-lg leading-relaxed text-slate-200 italic font-medium">${dialogue}</p>
-                        <div class="p-3 bg-orange-500/10 rounded-lg border border-orange-500/20">
-                            <p class="text-[10px] text-orange-400 font-mono italic leading-normal"><strong>Visual Prompt:</strong> ${visualPrompt}</p>
+                    // TikTok 9:16 Image URL (Using Pollinations as reliable backup)
+                    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(visualPrompt + ", cinematic lighting, 8k, highly realistic, 9:16 aspect ratio")}?width=1080&height=1920&nologo=true&seed=${Math.floor(Math.random()*1000)}`;
+
+                    const sceneHtml = `
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-white text-black px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter">SCENE ${i+1}</span>
+                                <div class="h-[1px] flex-grow bg-white/10"></div>
+                            </div>
+                            
+                            <div class="image-container shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+                                <img src="${imageUrl}" class="w-full h-full object-cover" onload="this.parentElement.classList.remove('loading-shimmer')" onerror="this.src='https://via.placeholder.com/1080x1920/111/333?text=Image+Generating...'">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-6 left-6 right-6">
+                                     <p class="text-cyan-400 font-mono text-[8px] uppercase tracking-widest mb-1">Visual Prompt</p>
+                                     <p class="text-[10px] text-white/50 leading-tight">${visualPrompt}</p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                                <p class="text-xl leading-[1.8] text-white font-medium italic">${scriptPart}</p>
+                            </div>
                         </div>
                     `;
-                    output.appendChild(sceneDiv);
+                    output.innerHTML += sceneHtml;
                 }
 
                 resArea.classList.remove('hidden');
             } catch (e) {
-                alert("VPN (Singapore/USA) ချိတ်ဖို့ လိုအပ်ပါတယ်ဗျာ။");
+                alert("Connection Error. Check VPN (Singapore/USA)");
             } finally {
                 loader.classList.add('hidden');
                 btn.disabled = false;
