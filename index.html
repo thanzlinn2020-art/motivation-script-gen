@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Motivational Script Generator</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-6">
+
+<div class="max-w-2xl w-full">
+
+<h1 class="text-3xl font-bold text-center mb-2">
+Motivational Script Generator
+</h1>
+
+<p class="text-gray-400 text-center mb-8">
+Generate 1-minute Burmese motivational storytelling scripts
+</p>
+
+<!-- API KEY INPUT -->
+
+<div class="mb-4">
+<label class="text-sm text-gray-400">Groq API Key</label>
+<input id="apikey"
+class="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-700"
+placeholder="Paste your Groq API key here">
+</div>
+
+<!-- TOPIC INPUT -->
+
+<div class="mb-4">
+<label class="text-sm text-gray-400">Topic</label>
+<input id="topic"
+class="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-700"
+placeholder="Example: Never give up">
+</div>
+
+<!-- GENERATE BUTTON -->
+
+<button
+onclick="generateScript()"
+class="w-full bg-white text-black font-semibold py-3 rounded-lg hover:bg-gray-200 transition">
+Generate Script
+</button>
+
+<!-- RESULT -->
+
+<div class="mt-8 bg-zinc-900 border border-zinc-700 rounded-lg p-5 relative">
+
+<button
+onclick="copyScript()"
+class="absolute top-3 right-3 text-xs bg-white text-black px-3 py-1 rounded hover:bg-gray-200">
+Copy
+</button>
+
+<pre id="result" class="whitespace-pre-wrap text-gray-200">
+Your motivational script will appear here...
+</pre>
+
+</div>
+
+</div>
+
+<script>
+
+async function generateScript(){
+
+const apiKey = document.getElementById("apikey").value;
+const topic = document.getElementById("topic").value;
+const result = document.getElementById("result");
+
+if(!apiKey){
+alert("Please enter your Groq API Key");
+return;
+}
+
+if(!topic){
+alert("Please enter a topic");
+return;
+}
+
+result.textContent = "Generating script...";
+
+try{
+
+const response = await fetch("https://api.groq.com/openai/v1/chat/completions",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer " + apiKey
+},
+
+body:JSON.stringify({
+
+model:"llama3-70b-8192",
+
+messages:[
+
+{
+role:"system",
+content:"You are a motivational speaker. Write a 1-minute storytelling script in Burmese. Structure it with a Hook, a Struggle story, a Lesson, and a CTA. Total words: 150-180."
+},
+
+{
+role:"user",
+content:`Topic: ${topic}. Include time markers like [00:00], [00:10], etc.`
+}
+
+]
+
+})
+
+});
+
+const data = await response.json();
+
+result.textContent =
+data.choices?.[0]?.message?.content || "Error generating script.";
+
+}catch(err){
+
+result.textContent="Error: " + err.message;
+
+}
+
+}
+
+function copyScript(){
+
+const text = document.getElementById("result").textContent;
+
+navigator.clipboard.writeText(text);
+
+alert("Script copied!");
+
+}
+
+</script>
+
+</body>
+</html>
