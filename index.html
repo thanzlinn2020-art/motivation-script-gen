@@ -1,119 +1,52 @@
-<!DOCTYPE html>
-<html lang="my">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lynn Movie Talks | Elite Studio</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Pyidaungsu', sans-serif; background: #020617; color: #f8fafc; }
-        .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .gradient-text { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .custom-loader { border-right-color: transparent; animation: rotate 1s linear infinite; }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col items-center justify-center p-5">
+async function generateEliteScript() {
+    const topic = document.getElementById('topicInput').value;
+    const output = document.getElementById('outputText');
+    const resArea = document.getElementById('resultArea');
+    const loader = document.getElementById('loader');
+    const btn = document.getElementById('genBtn');
 
-    <header class="text-center mb-10">
-        <h1 class="text-6xl font-black gradient-text tracking-tighter uppercase">Lynn Movie Talks</h1>
-        <p class="text-slate-500 mt-2 text-[10px] tracking-[0.4em] font-bold uppercase">Thinking Logic & Pro Language Engine</p>
-    </header>
+    if(!topic) return;
 
-    <div class="w-full max-w-2xl glass-card p-10 rounded-[2.5rem] shadow-2xl">
-        <div class="space-y-6">
-            <input type="text" id="topicInput" placeholder="ဘာအကြောင်း ရေးချင်တာလဲ..." 
-                   class="w-full p-5 rounded-2xl bg-black border border-slate-800 focus:border-amber-500 outline-none transition text-white text-lg placeholder:text-slate-800">
-            
-            <button onclick="generateEliteScript()" id="genBtn" 
-                    class="w-full bg-gradient-to-r from-amber-500 to-red-600 text-white font-black py-5 rounded-2xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all uppercase tracking-widest text-sm">
-                Generate Elite Script ✍️
-            </button>
-        </div>
+    btn.disabled = true;
+    loader.classList.remove('hidden');
+    resArea.classList.add('hidden');
 
-        <div id="loader" class="hidden mt-12 text-center">
-            <div class="custom-loader inline-block w-10 h-10 border-4 border-amber-500 rounded-full mb-4"></div>
-            <p class="text-amber-500 font-bold text-[10px] tracking-widest animate-pulse uppercase">AI is thinking and writing...</p>
-        </div>
+    // URL ကို v1beta/models/gemini-pro သို့မဟုတ် gemini-1.5-flash လို့ ပြောင်းလိုက်ပါတယ်
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-        <div id="resultArea" class="hidden mt-12 p-8 bg-black/40 rounded-[2rem] border border-slate-800/50 relative">
-            <div id="outputText" class="text-lg md:text-xl leading-[2.2] text-slate-200 whitespace-pre-line italic font-medium"></div>
-            <button onclick="copyToClipboard()" class="mt-8 w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl text-xs font-bold transition uppercase">Copy Master Script</button>
-        </div>
-    </div>
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{
+                        text: `မင်းက စာရေးဆရာကြီး တစ်ယောက်လို မြန်မာစာကို အနုစိပ်ဆုံး ရေးပေးနိုင်တဲ့ Lynn Movie Talks ရဲ့ Storyteller ပါ။ 
+                        Topic: "${topic}" အပေါ်မှာ ၁ မိနစ်စာ Video Script တစ်ခု ရေးပေးပါ။
+                        စည်းကမ်းချက်များ-
+                        ၁။ လုံးဝ (လုံးဝ) စာအုပ်ကြီးစကားလုံးတွေဖြစ်တဲ့ 'သည်'၊ 'ပါသည်'၊ 'ပြုလုပ်သည်' တွေကို မသုံးပါနဲ့။ 
+                        ၂။ သူငယ်ချင်းတစ်ယောက်က ဘေးနားမှာ ပြောပြနေသလိုမျိုး 'တယ်'၊ 'ခဲ့တယ်'၊ 'နေတယ်' စတဲ့ သဘာဝကျတဲ့ စကားပြော style ကိုပဲ သုံးပါ။
+                        ၃။ စာသားတွေက ရင်ထဲရောက်ရမယ်၊ စိတ်လှုပ်ရှားမှု ပါရမယ်၊ မြန်မာစာ အသုံးအနှုန်း မှန်ကန်ပြီး နားဝင်ချိုရမယ်။`
+                    }]
+                }]
+            })
+        });
 
-    <footer class="text-center py-10 text-slate-700 text-[10px] tracking-widest uppercase font-bold">
-        &copy; 2026 LYNN MOVIE TALKS STUDIO | POWERED BY GEMINI PRO
-    </footer>
-
-    <script>
-        // မင်းပေးထားတဲ့ Gemini API Key ကို ဒီမှာ လုံခြုံစွာ ထည့်ပေးထားပါတယ်
-        const API_KEY = "AIzaSyAtwMEKU9ig1-NRVdekA38lfwgRhIBjeqs"; 
-
-        async function generateEliteScript() {
-            const topic = document.getElementById('topicInput').value;
-            const output = document.getElementById('outputText');
-            const resArea = document.getElementById('resultArea');
-            const loader = document.getElementById('loader');
-            const btn = document.getElementById('genBtn');
-
-            if(!topic) return;
-
-            btn.disabled = true;
-            loader.classList.remove('hidden');
-            resArea.classList.add('hidden');
-
-            // Gemini 1.5 Pro Model - မြန်မာစာ အကောင်းဆုံး ရေးပေးနိုင်တဲ့ model ပါ
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${API_KEY}`;
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `မင်းက စာရေးဆရာကြီး တစ်ယောက်လို မြန်မာစာကို အနုစိပ်ဆုံး ရေးပေးနိုင်တဲ့ Lynn Movie Talks ရဲ့ Storyteller ပါ။ 
-                                Topic: "${topic}" အပေါ်မှာ ၁ မိနစ်စာ Video Script တစ်ခု ရေးပေးပါ။
-                                
-                                စည်းကမ်းချက်များ-
-                                ၁။ လုံးဝ (လုံးဝ) စာအုပ်ကြီးစကားလုံးတွေဖြစ်တဲ့ 'သည်'၊ 'ပါသည်'၊ 'ပြုလုပ်သည်' တွေကို မသုံးပါနဲ့။ 
-                                ၂။ သူငယ်ချင်းတစ်ယောက်က ဘေးနားမှာ ပြောပြနေသလိုမျိုး 'တယ်'၊ 'ခဲ့တယ်'၊ 'နေတယ်' စတဲ့ သဘာဝကျတဲ့ စကားပြော style ကိုပဲ သုံးပါ။
-                                ၃။ စာသားတွေက ရင်ထဲရောက်ရမယ်၊ စိတ်လှုပ်ရှားမှု ပါရမယ်၊ မြန်မာစာ အသုံးအနှုန်း မှန်ကန်ပြီး နားဝင်ချိုရမယ်။
-                                ၄။ ခေါင်းစဉ် (Hook) ကနေ နိဂုံးအထိ စွဲဆောင်မှုရှိပါစေ။
-                                ၅။ High-level thinking သုံးပြီး စဉ်းစားရေးသားပေးပါ။`
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 1.0,
-                            topP: 0.95
-                        }
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    output.innerText = "Error: " + data.error.message + "\n\n(VPN Region ကို Singapore သို့မဟုတ် USA ပြောင်းပေးပါ)";
-                } else {
-                    const script = data.candidates[0].content.parts[0].text;
-                    output.innerText = script;
-                }
-                resArea.classList.remove('hidden');
-            } catch (error) {
-                output.innerText = "ချိတ်ဆက်မှု အမှားရှိနေပါတယ်။ VPN (Singapore/USA) ကို သေချာ စစ်ဆေးပေးပါဦး။";
-                resArea.classList.remove('hidden');
-            } finally {
-                loader.classList.add('hidden');
-                btn.disabled = false;
-            }
+        const data = await response.json();
+        
+        if (data.error) {
+            // Model ရှာမတွေ့တဲ့ Error ဖြစ်ခဲ့ရင် နောက် Model တစ်ခုနဲ့ ထပ်စမ်းကြည့်တဲ့ backup logic
+            output.innerText = "Error: " + data.error.message;
+        } else {
+            const script = data.candidates[0].content.parts[0].text;
+            output.innerText = script;
         }
-
-        function copyToClipboard() {
-            navigator.clipboard.writeText(document.getElementById('outputText').innerText);
-            alert("Script ကူးပြီးပါပြီ။ CapCut မှာ သုံးနိုင်ပါပြီ!");
-        }
-    </script>
-</body>
-</html>
+        resArea.classList.remove('hidden');
+    } catch (error) {
+        output.innerText = "ချိတ်ဆက်မှု အမှားရှိနေပါတယ်။ VPN (Singapore/USA) ကို စစ်ပေးပါ။";
+        resArea.classList.remove('hidden');
+    } finally {
+        loader.classList.add('hidden');
+        btn.disabled = false;
+    }
+}
